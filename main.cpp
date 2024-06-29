@@ -2,7 +2,14 @@
 using namespace std;
 
 class BigInteger {
+
+public:
+
+    string data;
+    bool isNeg;
+
 private:
+
     string addString(const string& a, const string& b) {
         string res;
         int s1 = a.size(), s2 = b.size(),dig,carry = 0,i = 0, j = 0;
@@ -77,24 +84,34 @@ private:
         return isNeg;
     }
 
-
-
 public:
-    string data;
-    bool isNeg;
-
-    BigInteger(string s) {
-        if (s[0] == '-'){
-            this->isNeg = true; 
-            this->data = s.substr(1); 
-        } 
-        else{
-            this->isNeg = false;
-            this->data = s;
+    BigInteger(string s ,bool rev_true = false) {
+        if(rev_true){
+            int ss = s.size();
+            if (s[ss-1] == '-'){
+                this->isNeg = true; 
+                this->data = s.substr(0,ss-1); 
+            } 
+            else{
+                this->isNeg = false;
+                this->data = s;
+            }
         }
-        reverse(data.begin(),data.end());
+        else{
+            if (s[0] == '-'){
+                this->isNeg = true; 
+                this->data = s.substr(1); 
+            } 
+            else{
+                this->isNeg = false;
+                this->data = s;
+            }
+            reverse(data.begin(),data.end());
+
+        }
+        
     }
-   
+    BigInteger() : data("0"), isNeg(false) {}
 
     BigInteger operator+(BigInteger& other){
 
@@ -102,40 +119,88 @@ public:
 
             string result = addString(this->data, other.data);
             if (this->isNegative())result = result + '-';
-            reverse(result.begin(),result.end());
-            return BigInteger(result);
+            return BigInteger(result,1);
         }
         else{
             if(absGreaterThan(this->data,other.data)){
                 string result = subString(this->data, other.data);
                 if (this->isNegative())result = result + '-';
-                reverse(result.begin(),result.end());
-                return BigInteger(result);
+                return BigInteger(result,1);
 
             }
             else{
                 
                 string result = subString(other.data,this->data);
                 if(other.isNegative())result = result + '-';
-                reverse(result.begin(),result.end());
-                return BigInteger(result);
+                return BigInteger(result,1);
             }
         }
     }
+    BigInteger operator-(BigInteger& other){
 
+        if(this->isNegative() != other.isNegative()){
 
-
-
+            string result = addString(this->data, other.data);
+            if (this->isNegative())result = result + '-';
+            return BigInteger(result,1);
+        }
+        else{
+            if(absGreaterThan(this->data,other.data)){
+                string result = subString(this->data, other.data);
+                if (this->isNegative())result = result + '-';
+                return BigInteger(result,1);
+            }
+            else{
+                string result = subString(other.data,this->data);
+                if(other.isNegative())result = result + '-';
+                return BigInteger(result,1);
+            }
+        }
+    }
+    BigInteger& operator++() { 
+        BigInteger one("1");
+        *this = *this + one;
+        return *this;
+    }
+    BigInteger operator++(int) {
+        BigInteger temp = *this;
+        ++(*this);
+        return temp;
+    }
+    BigInteger& operator--() { 
+        BigInteger one("-1");
+        *this = *this + one;
+        return *this;
+    }
+    BigInteger operator--(int) {
+        BigInteger temp = *this;
+        --(*this);
+        return temp;
+    }
     
+
+    friend ostream& operator<<(ostream& os, const BigInteger& bi) {
+        if (bi.isNeg) os << '-';
+        for (int i = bi.data.size() - 1; i >= 0; --i) {
+            os << bi.data[i];
+        }
+        return os;
+    }
+    friend istream& operator>>(istream& is, BigInteger& bi) {
+        string input;
+        is >> input;
+        bi = BigInteger(input);
+        return is;
+    }
 };
 
 int main(){
-    BigInteger a("-1211212212123");
-    BigInteger b("-123666");
-    BigInteger d("-123666");
-    cout<<a.data<<" "<<b.data<<endl;
-    BigInteger c = a+b+d;
-    cout<<c.data<<endl;
+    
+    BigInteger c;
+    cin>>c;
+    c = c + c;
+    cout<<c<<endl;
+
 
    
 
