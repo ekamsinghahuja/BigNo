@@ -25,7 +25,6 @@ private:
         return res;
     }
     string subString(string& a,string& b){
-    
         string res;
         int s1 = a.size(), s2 = b.size(),dig,bow = 0,i = 0, j = 0;
         while(i<s1 && j<s2){
@@ -41,27 +40,41 @@ private:
             }
         }
         while(i<s1){
-            if(a[i]-bow < '0'){
+            if((a[i]-'0')-bow < 0){
                 dig = (a[i++]-'0')+10-bow;
-                res.push_back(dig);
+                res.push_back((dig+'0'));
                 bow = 1; 
             }
             else{
                 dig = (a[i++]-'0')-bow;
-                res.push_back(dig);
+                res.push_back((dig+'0'));
                 bow = 0;
             }
         }
         int ans_len = 0;
-
         for(int i=res.size()-1;i>=0;i--){
             if(res[i]!='0')break;
             ans_len++;
         }
-        
         ans_len = res.size() - ans_len;
         if(ans_len==0)return "0";
         return res.substr(0,ans_len);
+    }
+    bool absGreaterThan(string& num1,string& num2) {
+        if (num1.size() != num2.size()) {
+            return num1.size() > num2.size();
+        }
+        int i=0;
+        while(i<num1.size()&&num1[i]==num2[i]){
+            i++;
+        }
+        if(i==0){
+            return 0;
+        }
+        return num1[i] > num2[i];
+    }
+    bool isNegative(){
+        return isNeg;
     }
 
 
@@ -70,7 +83,7 @@ public:
     string data;
     bool isNeg;
 
-    BigInteger(string& s) {
+    BigInteger(string s) {
         if (s[0] == '-'){
             this->isNeg = true; 
             this->data = s.substr(1); 
@@ -81,21 +94,32 @@ public:
         }
         reverse(data.begin(),data.end());
     }
-    bool isNegative(){
-        return isNeg;
-    }
+   
 
     BigInteger operator+(BigInteger& other){
-        if(this->isNegative != other.isNegative){
-            string result = addStrings(this->data, other.data);
-            if (this->isNegative)result = result + '-';
+
+        if(this->isNegative() == other.isNegative()){
+
+            string result = addString(this->data, other.data);
+            if (this->isNegative())result = result + '-';
+            reverse(result.begin(),result.end());
             return BigInteger(result);
         }
         else{
-            if()
-            string result = 
+            if(absGreaterThan(this->data,other.data)){
+                string result = subString(this->data, other.data);
+                if (this->isNegative())result = result + '-';
+                reverse(result.begin(),result.end());
+                return BigInteger(result);
 
-            
+            }
+            else{
+                
+                string result = subString(other.data,this->data);
+                if(other.isNegative())result = result + '-';
+                reverse(result.begin(),result.end());
+                return BigInteger(result);
+            }
         }
     }
 
@@ -106,15 +130,16 @@ public:
 };
 
 int main(){
-    string num1 = "-123456789";
-    BigInteger bigInt1(num1);
+    BigInteger a("-1211212212123");
+    BigInteger b("-123666");
+    BigInteger d("-123666");
+    cout<<a.data<<" "<<b.data<<endl;
+    BigInteger c = a+b+d;
+    cout<<c.data<<endl;
 
-    string num2 = "987654321";
-    BigInteger bigInt2(num2);
+   
 
-    cout << "bigInt1: " << (bigInt1.isNeg ? "-" : "") << bigInt1.data << endl;
-    cout << "bigInt2: " << (bigInt2.isNeg ? "-" : "") << bigInt2.data << endl;
-
+   
     return 0;
     
 }
