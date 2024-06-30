@@ -9,7 +9,6 @@ public:
     bool isNeg;
 
 private:
-
     string addString(const string& a, const string& b) {
         string res;
         int s1 = a.size(), s2 = b.size(),dig,carry = 0,i = 0, j = 0;
@@ -71,11 +70,11 @@ private:
         if (num1.size() != num2.size()) {
             return num1.size() > num2.size();
         }
-        int i=0;
-        while(i<num1.size()&&num1[i]==num2[i]){
-            i++;
+        int i=num1.size()-1;
+        while(i>=0&&num1[i]==num2[i]){
+            i--;
         }
-        if(i==0){
+        if(i<0){
             return 0;
         }
         return num1[i] > num2[i];
@@ -83,7 +82,6 @@ private:
     bool isNegative(){
         return isNeg;
     }
-
 public:
     BigInteger(string s ,bool rev_true = false) {
         if(rev_true){
@@ -157,6 +155,7 @@ public:
             }
         }
     }
+
     BigInteger& operator++() { 
         BigInteger one("1");
         *this = *this + one;
@@ -173,11 +172,41 @@ public:
         return *this;
     }
     BigInteger operator--(int) {
+
         BigInteger temp = *this;
         --(*this);
         return temp;
     }
     
+    bool operator==(const BigInteger& other) const {
+        return this->isNeg == other.isNeg && this->data == other.data;
+    }
+    bool operator!=(const BigInteger& other) const {
+        return !(*this == other);
+    }
+    bool operator<(const BigInteger& other) const {
+        if (this->isNeg != other.isNeg) {
+            return this->isNeg;
+        }
+        if (this->data.size() != other.data.size()) {
+            return this->isNeg ? this->data.size() > other.data.size() : this->data.size() < other.data.size();
+        }
+        for (int i = this->data.size() - 1; i >= 0; --i) {
+            if (this->data[i] != other.data[i]) {
+                return this->isNeg ? this->data[i] > other.data[i] : this->data[i] < other.data[i];
+            }
+        }
+        return false;
+    }
+    bool operator<=(const BigInteger& other) const {
+        return *this < other || *this == other;
+    }
+    bool operator>(const BigInteger& other) const {
+        return !(*this <= other);
+    }
+    bool operator>=(const BigInteger& other) const {
+        return !(*this < other);
+    }
 
     friend ostream& operator<<(ostream& os, const BigInteger& bi) {
         if (bi.isNeg) os << '-';
@@ -192,14 +221,16 @@ public:
         bi = BigInteger(input);
         return is;
     }
+
 };
 
 int main(){
     
-    BigInteger c;
-    cin>>c;
-    c = c + c;
-    cout<<c<<endl;
+    BigInteger c("-141234");
+    BigInteger d("141234");
+    cout<<c+d<<endl;
+    cout<<(d==c)<<endl;
+    
 
 
    
