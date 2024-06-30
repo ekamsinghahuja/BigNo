@@ -155,6 +155,28 @@ public:
             }
         }
     }
+    BigInteger operator*(const BigInteger& other) const {
+        int sign = (this->isNeg == other.isNeg) ? 1 : -1;
+        string result(this->data.size() + other.data.size(), '0');
+        
+        for (int i = 0; i < this->data.size(); ++i) {
+            int carry = 0;
+            for (int j = 0; j < other.data.size(); ++j) {
+                int sum = (result[i + j] - '0') + (this->data[i] - '0') * (other.data[j] - '0') + carry;
+                result[i + j] = (sum % 10) + '0';
+                carry = sum / 10;
+            }
+            result[i + other.data.size()] += carry;
+        }
+        
+        while (result.size() > 1 && result.back() == '0') {
+            result.pop_back();
+        }
+        if (sign == -1) result.push_back('-');
+        
+        return BigInteger(result,1);
+    }
+
 
     BigInteger& operator++() { 
         BigInteger one("1");
@@ -226,10 +248,12 @@ public:
 
 int main(){
     
-    BigInteger c("-141234");
-    BigInteger d("141234");
-    cout<<c+d<<endl;
-    cout<<(d==c)<<endl;
+    BigInteger c;
+    BigInteger d;
+    cin>>c;
+    cin>>d;
+    cout<<c*d<<endl;
+    
     
 
 
